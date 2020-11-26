@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:c="http://www.springframework.org/schema/c"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd">
+		
+			
+	<!-- Root Context: defines shared resources visible to all other web components -->
+		<import resource="classpath:datasource/dbcpdatasource.xml" />
+	
+	 <!-- SqlSessionFactory 객체를 생성해주는 SqlSessionFactoryBean을 스프링 Bean으로 정의  -->
+	 <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+	 	<!-- db 접속과 관련된 dataSource를 세터 주입  -->
+	 	<property name="dataSource" ref="dataSource" />
+	 	<!--  xml Mapper의 위치를 세터 주입  -->
+	 	<property name="mapperLocations" value="classpath:repository/mappers/**/*Mapper.xml" />
+	 	<!--
+	 		mapper에서는 클래스 이름은 완전한 클래스 이름을 사용하는 것이 원칙
+	 		클래스 이름만 사용하기 위해서 특정 위치를 타입 별칭으로 지정하는 속성
+	 	 -->
+	 	 <property name="typeAliasesPackage" value="com.project.Trip.domain" />
+	 </bean>
+	
+	 <!-- 
+	 	Dao에서 사용하는 SqlSessionTemplate을 스프링 Bean으로 정의하고
+	 	Dao 클래스에 이 SqlSessionTemplate를 주입 받을 수 있는 생성자 또는 세터를 만든다
+	  -->
+	  <bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate" c:sqlSessionFactory-ref="sqlSessionFactory"/>
+		
+		<!-- 트랜잭션 처리에 사용되는 Manager 클래스로 지금은 당장 사용하지 않는다  // 그러므로 생략가능 -->
+		
+		<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager" p:dataSource-ref="dataSource" /> 
+	
+</beans>
